@@ -15,9 +15,7 @@
 <div class="text-end mb-3">
 
     <a href="{% url 'export_csv' %}" class="btn btn-success">
-
         Export CSV
-
     </a>
 
 </div>
@@ -82,18 +80,15 @@
 
             <option value="">All Lead Types</option>
 
-            <option value="Contact Us"
-                {% if lead_type == "Contact Us" %}selected{% endif %}>
+            <option value="Contact Us" {% if lead_type == "Contact Us" %}selected{% endif %}>
                 Contact Us
             </option>
 
-            <option value="Enquire Now"
-                {% if lead_type == "Enquire Now" %}selected{% endif %}>
+            <option value="Enquire Now" {% if lead_type == "Enquire Now" %}selected{% endif %}>
                 Enquire Now
             </option>
 
-            <option value="Request Demo"
-                {% if lead_type == "Request Demo" %}selected{% endif %}>
+            <option value="Request Demo" {% if lead_type == "Request Demo" %}selected{% endif %}>
                 Request Demo
             </option>
 
@@ -110,6 +105,8 @@
             <option value="Contacted" {% if status == "Contacted" %}selected{% endif %}>Contacted</option>
 
             <option value="Qualified" {% if status == "Qualified" %}selected{% endif %}>Qualified</option>
+
+            <option value="Interested" {% if status == "Interested" %}selected{% endif %}>Interested</option>
 
             <option value="Converted" {% if status == "Converted" %}selected{% endif %}>Converted</option>
 
@@ -136,12 +133,15 @@
 
             <th>ID</th>
             <th>Lead Type</th>
+            <th>Source</th>
             <th>Status</th>
+            <th>Assigned To</th>
             <th>Name</th>
             <th>Email</th>
             <th>Mobile</th>
             <th>Company</th>
             <th>Message</th>
+            <th>Created Date</th>
             <th width="230">Action</th>
 
         </tr>
@@ -158,6 +158,8 @@
 
             <td>{{ lead.lead_type }}</td>
 
+            <td>{{ lead.source }}</td>
+
             <td>
 
                 {% if lead.status == "New" %}
@@ -168,6 +170,9 @@
 
                 {% elif lead.status == "Qualified" %}
                     <span class="badge bg-warning text-dark">{{ lead.status }}</span>
+
+                {% elif lead.status == "Interested" %}
+                    <span class="badge bg-secondary">{{ lead.status }}</span>
 
                 {% elif lead.status == "Converted" %}
                     <span class="badge bg-success">{{ lead.status }}</span>
@@ -182,10 +187,16 @@
             </td>
 
             <td>{{ lead.name }}</td>
+
             <td>{{ lead.email }}</td>
+
             <td>{{ lead.mobile }}</td>
+
             <td>{{ lead.company }}</td>
+
             <td>{{ lead.message }}</td>
+
+            <td>{{ lead.created_at|date:"d M Y H:i" }}</td>
 
             <td>
 
@@ -215,7 +226,7 @@
 
         <tr>
 
-            <td colspan="9" class="text-center">
+            <td colspan="11" class="text-center">
                 No Leads Found
             </td>
 

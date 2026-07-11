@@ -1,30 +1,21 @@
-from django.shortcuts import render, redirect
-from .models import Lead, Event
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q
-from django.core.paginator import Paginator
 import csv
 from django.http import HttpResponse
+from .models import Lead, Event, Note
 
 def create_lead(request):
 
     if request.method == "POST":
-
         Lead.objects.create(
-
             lead_type=request.POST.get("lead_type"),
-
+            source="Website Widget",
+            assigned_to=request.POST.get("assigned_to", ""),
             name=request.POST.get("name"),
-
             email=request.POST.get("email"),
-
             mobile=request.POST.get("mobile"),
-
             company=request.POST.get("company"),
-
             message=request.POST.get("message"),
-
         )
 
         Event.objects.create(
@@ -35,10 +26,7 @@ def create_lead(request):
     return render(request, "app1/create_lead.html")
 
 
-from django.db.models import Q
 
-from django.db.models import Q
-from django.core.paginator import Paginator
 
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -96,7 +84,26 @@ def view_lead(request, id):
 
     lead = get_object_or_404(Lead, id=id)
 
-    return render(request, "app1/view_lead.html", {"lead": lead})
+    if request.method == "POST":
+
+        note_text = request.POST.get("note")
+
+        if note_text:
+            Note.objects.create(
+                lead=lead,
+                note=note_text
+            )
+
+        return redirect("view_lead", id=id)
+
+    return render(
+        request,
+        "app1/view_lead.html",
+        {
+            "lead": lead,
+            "notes": lead.notes.all().order_by("-created_at")
+        }
+    )
 
 def edit_lead(request, id):
 
@@ -105,12 +112,15 @@ def edit_lead(request, id):
     if request.method == "POST":
 
         lead.lead_type = request.POST.get("lead_type")
+        lead.source = request.POST.get("source")
         lead.status = request.POST.get("status")
+        lead.assigned_to = request.POST.get("assigned_to")
         lead.name = request.POST.get("name")
         lead.email = request.POST.get("email")
         lead.mobile = request.POST.get("mobile")
         lead.company = request.POST.get("company")
         lead.message = request.POST.get("message")
+
 
         lead.save()
 
@@ -138,29 +148,33 @@ def export_csv(request):
     writer.writerow([
         'ID',
         'Lead Type',
+        'Source',
+        'Assigned To',
         'Status',
         'Name',
         'Email',
         'Mobile',
         'Company',
-        'Message'
+        'Message',
+        'Created Date'
     ])
 
     leads = Lead.objects.all().order_by('-id')
 
     for lead in leads:
-
         writer.writerow([
             lead.id,
             lead.lead_type,
+            lead.source,
+            lead.assigned_to,
             lead.status,
             lead.name,
             lead.email,
             lead.mobile,
             lead.company,
-            lead.message
+            lead.message,
+            lead.created_at.strftime("%d-%m-%Y %H:%M")
         ])
-
     return response
 
 def track_event(request):
@@ -176,3 +190,4 @@ def track_event(request):
         return JsonResponse({"message": "Event Saved"})
 
     return JsonResponse({"error": "POST request required"})
+

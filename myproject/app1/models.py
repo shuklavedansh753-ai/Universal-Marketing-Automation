@@ -12,6 +12,7 @@ class Lead(models.Model):
         ("New", "New"),
         ("Contacted", "Contacted"),
         ("Qualified", "Qualified"),
+        ("Interested", "Interested"),
         ("Converted", "Converted"),
         ("Lost", "Lost"),
     ]
@@ -21,11 +22,19 @@ class Lead(models.Model):
         choices=LEAD_TYPES,
         default="Contact Us"
     )
+    source = models.CharField(
+        max_length=50,
+        default="Website Widget"
+    )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="New"
+    )
+    assigned_to = models.CharField(
+        max_length=100,
+        blank=True
     )
 
     name = models.CharField(max_length=100)
@@ -52,3 +61,18 @@ class Event(models.Model):
 
     def __str__(self):
         return self.event_name
+
+class Note(models.Model):
+
+    lead = models.ForeignKey(
+        Lead,
+        on_delete=models.CASCADE,
+        related_name="notes"
+    )
+
+    note = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Note for {self.lead.name}"

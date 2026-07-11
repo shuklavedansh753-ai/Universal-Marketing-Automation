@@ -11,64 +11,113 @@
 <body class="container mt-5">
 
 <h2 class="text-center mb-4">
-
-Lead Details
-
+    Lead Details
 </h2>
 
 <table class="table table-bordered">
 
-<tr>
-<th width="250">ID</th>
-<td>{{ lead.id }}</td>
-</tr>
+    <tr>
+        <th width="250">ID</th>
+        <td>{{ lead.id }}</td>
+    </tr>
 
-<tr>
-<th>Lead Type</th>
-<td>{{ lead.lead_type }}</td>
-</tr>
+    <tr>
+        <th>Lead Type</th>
+        <td>{{ lead.lead_type }}</td>
+    </tr>
 
-<tr>
-<th>Status</th>
-<td>{{ lead.status }}</td>
-</tr>
+    <tr>
+        <th>Source</th>
+        <td>{{ lead.source }}</td>
+    </tr>
 
-<tr>
-<th>Name</th>
-<td>{{ lead.name }}</td>
-</tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ lead.status }}</td>
+    </tr>
 
-<tr>
-<th>Email</th>
-<td>{{ lead.email }}</td>
-</tr>
+    <tr>
+        <th>Assigned To</th>
+        <td>{{ lead.assigned_to }}</td>
+    </tr>
 
-<tr>
-<th>Mobile</th>
-<td>{{ lead.mobile }}</td>
-</tr>
+    <tr>
+        <th>Name</th>
+        <td>{{ lead.name }}</td>
+    </tr>
 
-<tr>
-<th>Company</th>
-<td>{{ lead.company }}</td>
-</tr>
+    <tr>
+        <th>Email</th>
+        <td>{{ lead.email }}</td>
+    </tr>
 
-<tr>
-<th>Message</th>
-<td>{{ lead.message }}</td>
-</tr>
+    <tr>
+        <th>Mobile</th>
+        <td>{{ lead.mobile }}</td>
+    </tr>
 
-<tr>
-<th>Created At</th>
-<td>{{ lead.created_at }}</td>
-</tr>
+    <tr>
+        <th>Company</th>
+        <td>{{ lead.company }}</td>
+    </tr>
+
+    <tr>
+        <th>Message</th>
+        <td>{{ lead.message }}</td>
+    </tr>
+
+    <tr>
+        <th>Created Date</th>
+        <td>{{ lead.created_at|date:"d M Y H:i" }}</td>
+    </tr>
 
 </table>
+<hr>
+
+<h3>Notes</h3>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <textarea
+        class="form-control mb-3"
+        name="note"
+        placeholder="Enter Note"
+        required></textarea>
+
+    <button class="btn btn-primary">
+        Add Note
+    </button>
+
+</form>
+
+<hr>
+
+{% for note in notes %}
+
+<div class="card mb-3">
+
+    <div class="card-body">
+
+        <p>{{ note.note }}</p>
+
+        <small class="text-muted">
+            {{ note.created_at|date:"d M Y H:i" }}
+        </small>
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<p>No notes added yet.</p>
+
+{% endfor %}
 
 <a href="{% url 'lead_list' %}" class="btn btn-secondary">
-
-Back
-
+    Back
 </a>
 
 </body>
