@@ -72,21 +72,49 @@
     </tr>
 
 </table>
+
 <hr>
 
-<h3>Notes</h3>
+<h3>Add Note</h3>
 
 <form method="POST">
 
     {% csrf_token %}
 
-    <textarea
-        class="form-control mb-3"
-        name="note"
-        placeholder="Enter Note"
-        required></textarea>
+    <div class="mb-3">
+        <label class="form-label"><strong>Note Type</strong></label>
 
-    <button class="btn btn-primary">
+        <select name="note_type" class="form-select">
+
+            <option value="follow_up">
+                Follow-up
+            </option>
+
+            <option value="call_remark">
+                Call Remark
+            </option>
+
+            <option value="meeting_remark">
+                Meeting Remark
+            </option>
+
+        </select>
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label"><strong>Note</strong></label>
+
+        <textarea
+            name="note"
+            class="form-control"
+            rows="4"
+            placeholder="Enter your note here..."
+            required></textarea>
+
+    </div>
+
+    <button type="submit" class="btn btn-primary">
         Add Note
     </button>
 
@@ -94,16 +122,26 @@
 
 <hr>
 
+<h3>Notes History</h3>
+
 {% for note in notes %}
 
 <div class="card mb-3">
 
+    <div class="card-header bg-light">
+
+        <strong>{{ note.get_note_type_display }}</strong>
+
+    </div>
+
     <div class="card-body">
 
-        <p>{{ note.note }}</p>
+        <p class="mb-2">
+            {{ note.note }}
+        </p>
 
         <small class="text-muted">
-            {{ note.created_at|date:"d M Y H:i" }}
+            Added on {{ note.created_at|date:"d M Y H:i" }}
         </small>
 
     </div>
@@ -112,7 +150,9 @@
 
 {% empty %}
 
-<p>No notes added yet.</p>
+<div class="alert alert-info">
+    No notes added yet.
+</div>
 
 {% endfor %}
 
